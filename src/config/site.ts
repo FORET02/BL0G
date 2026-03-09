@@ -6,7 +6,7 @@ const siteConfig: SiteConfig = {
   // TODO: GitHub Pages 주소로 변경하세요.
   // - User Pages: https://USERNAME.github.io
   // - Project Pages: https://USERNAME.github.io/REPO
-  siteUrl: 'https://FORET02.github.io',
+  siteUrl: 'https://foret02.github.io',
 
   title: {
     ko: "Foret's Blog",
@@ -21,7 +21,7 @@ const siteConfig: SiteConfig = {
       ko: 'FORET',
     },
     email: 'doeun1101@email.com',
-    avatar: '/img/pettydust.jpg',
+    avatar: '/BL0G/img/pettydust.jpg',
     bio: {
       ko: '보안/개발 기록을 정리하는 기술 블로그입니다.',
     },
@@ -114,7 +114,7 @@ const siteConfig: SiteConfig = {
   categories: {
     security: {
       enabled: true,
-      path: '/security',
+      path: '/BL0G/security',
       icon: '🚨',
       label: {
         ko: 'security',
@@ -147,7 +147,7 @@ const siteConfig: SiteConfig = {
 
   // SEO & Meta tags
   seo: {
-    defaultImage: '/img/pettydust.jpg',
+    defaultImage: '/BL0G/img/pettydust.jpg',
     twitterHandle: '',
     googleAnalytics: '',
   },
