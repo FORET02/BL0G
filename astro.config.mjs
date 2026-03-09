@@ -11,6 +11,7 @@ const { siteUrl, defaultLanguage, languages } = siteConfig;
 // https://astro.build/config
 export default defineConfig({
   site: siteUrl,
+  base: '/BL0G',
   output: 'static',
   trailingSlash: 'always',
   i18n: {
