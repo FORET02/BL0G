@@ -5,6 +5,7 @@ description: >-
  2026년 새해 국내에서 처음 공식적으로 확인된 해킹 사고이다.
 announcement: '2026년 새해 국내 첫 공식적으로 확인된 해킹 사고이다.'
 date: '2026-01-04'
+draft : false
 ---
 
 ## Foret's Blog
