@@ -55,21 +55,29 @@ const siteTitle =
   siteConfig.title[currentLocaleDefinition.code] ??
   siteConfig.title[DEFAULT_LOCALE] ??
   Object.values(siteConfig.title)[0];
+
 const descriptionContent = description ?? fallbackDescription;
+
 const rssTitleDefault =
   siteConfig.title[DEFAULT_LOCALE] ??
   siteConfig.title[currentLocaleDefinition.code] ??
   Object.values(siteConfig.title)[0];
+
 const ogLocale = getOgLocale(currentLocaleDefinition.code);
 const isArticle = ogType === 'article';
+
 const articleAuthor =
   authorName ??
   siteConfig.author.name[currentLocaleDefinition.code] ??
   siteConfig.author.name[DEFAULT_LOCALE] ??
   Object.values(siteConfig.author.name)[0];
+
 const publishedTime = publishedAt ?? null;
 const modifiedTime = modifiedAt ?? publishedTime;
+
 const BASE_URL = import.meta.env.BASE_URL;
+const GOOGLE_SITE_VERIFICATION =
+  import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 ---
 
 <head>
@@ -83,23 +91,41 @@ const BASE_URL = import.meta.env.BASE_URL;
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
 
+  {GOOGLE_SITE_VERIFICATION && (
+    <meta
+      name="google-site-verification"
+      content={GOOGLE_SITE_VERIFICATION}
+    />
+  )}
+
   <script is:inline src={`${BASE_URL}js/theme.js`}></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href={`${BASE_URL}css/style.css`} />
+
   {enableCodeHighlight && (
     <>
       <link rel="preconnect" href="https://cdnjs.cloudflare.com/" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
-      <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.4.0/styles/base16/tomorrow-night.min.css" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/@highlightjs/cdn-assets@11.4.0/styles/base16/tomorrow-night.min.css"
+      />
     </>
   )}
+
   <link rel="manifest" href={`${BASE_URL}manifest.webmanifest`} />
+
   {enableCodeHighlight && (
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+    ></script>
   )}
-  <script type="module" src={`${BASE_URL}js/main.js`}></script>
 
   <title>{title}</title>
 
@@ -132,6 +158,7 @@ const BASE_URL = import.meta.env.BASE_URL;
   <meta property="og:type" content={ogType} />
   <meta property="og:site_name" content={siteTitle} />
   <meta property="og:locale" content={ogLocale} />
+
   {isArticle && (
     <>
       {publishedTime && (
@@ -150,6 +177,7 @@ const BASE_URL = import.meta.env.BASE_URL;
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={descriptionContent} />
   <meta name="twitter:image" content={ogImage} />
+
   {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
 
   {siteConfig.features.rss && (
@@ -160,21 +188,23 @@ const BASE_URL = import.meta.env.BASE_URL;
         href={`${BASE_URL}rss.xml`}
         title={`${rssTitleDefault} RSS feed`}
       />
-      {listNonDefaultLocales()
-        .map((code) => (
-          <link
-            rel="alternate"
-            type="application/rss+xml"
-            href={`${BASE_URL}${code}/rss.xml`}
-            title={`${siteConfig.title[code] ?? rssTitleDefault} RSS feed`}
-          />
-        ))}
+      {listNonDefaultLocales().map((code) => (
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href={`${BASE_URL}${code}/rss.xml`}
+          title={`${siteConfig.title[code] ?? rssTitleDefault} RSS feed`}
+        />
+      ))}
     </>
   )}
 
   {siteConfig.seo.googleAnalytics && (
     <>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.seo.googleAnalytics}`}></script>
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.seo.googleAnalytics}`}
+      ></script>
       <script is:inline>
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
