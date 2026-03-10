@@ -19,12 +19,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/FORET02"
+    "url": "https://github.com/FORET02/BL0G"
   },
   "bugs": {
-    "url": "https://github.com/FORET02/blog/issues"
+    "url": "https://github.com/FORET02/BL0G/issues"
   },
-  "homepage": "https://FORET02.github.io",
+  "homepage": "https://FORET02.github.io/BL0G",
   "scripts": {
     "dev": "run-p client:watch astro:dev",
     "start": "npm run dev",
