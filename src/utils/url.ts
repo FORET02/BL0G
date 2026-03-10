@@ -49,4 +49,46 @@ export function addTrailingSlash(path: string): string {
 export function removeTrailingSlash(path: string): string {
   if (path === '/') return path;
   return path.endsWith('/') ? path.slice(0, -1) : path;
-} 
+}
+
+/**
+ * Prefixes an internal path with Astro's BASE_URL.
+ * External URLs, anchors, mailto/tel links are returned unchanged.
+ * Paths that already include the base path are not duplicated.
+ */
+export function withBase(path: string): string {
+  const rawBaseUrl = import.meta.env.BASE_URL || '/';
+  const normalizedBaseUrl =
+    rawBaseUrl === '/' ? '/' : ensureTrailingSlash(rawBaseUrl);
+  const basePrefix =
+    normalizedBaseUrl === '/' ? '' : normalizedBaseUrl.replace(/\/$/, '');
+
+  if (!path) {
+    return normalizedBaseUrl;
+  }
+
+  if (
+    /^(?:[a-z]+:)?\/\//i.test(path) ||
+    path.startsWith('mailto:') ||
+    path.startsWith('tel:') ||
+    path.startsWith('#')
+  ) {
+    return path;
+  }
+
+  const { base, suffix } = splitSuffix(path);
+  const normalizedPath = base.startsWith('/') ? base : `/${base}`;
+
+  if (
+    basePrefix &&
+    (normalizedPath === basePrefix || normalizedPath.startsWith(`${basePrefix}/`))
+  ) {
+    return ensureTrailingSlash(`${normalizedPath}${suffix}`);
+  }
+
+  if (!basePrefix) {
+    return ensureTrailingSlash(`${normalizedPath}${suffix}`);
+  }
+
+  return ensureTrailingSlash(`${basePrefix}${normalizedPath}${suffix}`);
+}

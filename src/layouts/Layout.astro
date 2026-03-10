@@ -16,7 +16,7 @@ import {
   getCategoryPathSegment,
 } from '@lib/content';
 import { isDefaultLocale } from '@lib/language';
-import { ensureTrailingSlash } from '@utils/url';
+import { ensureTrailingSlash, removeTrailingSlash } from '@utils/url';
 import { getLangFromUrl, useTranslations, useTranslatedPath } from '@i18n/utils';
 import PageHead from '@components/layout/PageHead.astro';
 import SiteHeader from '@components/layout/SiteHeader.astro';
@@ -69,6 +69,26 @@ const pathname = ensureTrailingSlash(Astro.url.pathname);
 const baseDomain = siteConfig.siteUrl;
 const canonicalUrl = new URL(pathname, baseDomain).toString();
 const basePath = import.meta.env.BASE_URL ?? '/';
+const normalizedBasePath = basePath === '/' ? '/' : ensureTrailingSlash(basePath);
+const basePathPrefix =
+  normalizedBasePath === '/' ? '' : removeTrailingSlash(normalizedBasePath);
+
+const stripBasePath = (value: string): string => {
+  if (!basePathPrefix) {
+    return value || '/';
+  }
+
+  if (value === basePathPrefix) {
+    return '/';
+  }
+
+  if (value.startsWith(`${basePathPrefix}/`)) {
+    const stripped = value.slice(basePathPrefix.length);
+    return stripped || '/';
+  }
+
+  return value || '/';
+};
 
 const categories = getEnabledCategoryIds();
 const categorySegments = Array.from(
@@ -196,26 +216,25 @@ function getLocalePath(targetLang: string): string {
     return mapped;
   }
 
-  const normalizedPath = pathname === '/' ? '' : pathname.replace(/^\//, '');
+  const pathWithoutBase = stripBasePath(pathname);
+  const normalizedPath =
+    pathWithoutBase === '/' ? '' : pathWithoutBase.replace(/^\//, '');
+
   const isCurrentDefault = isDefaultLocale(lang);
   const contentSlug = isCurrentDefault
     ? normalizedPath
     : normalizedPath.replace(new RegExp(`^${escapeRegExp(lang)}/`), '');
 
-  if (targetLang === DEFAULT_LOCALE) {
-    const defaultPath = contentSlug ? `/${contentSlug}` : '/';
-    return ensureTrailingSlash(defaultPath);
-  }
+  const rawPath =
+    targetLang === DEFAULT_LOCALE
+      ? (contentSlug ? `/${contentSlug}` : '/')
+      : (contentSlug ? `/${targetLang}/${contentSlug}` : `/${targetLang}/`);
 
-  const candidatePath = contentSlug
-    ? ensureTrailingSlash(`/${targetLang}/${contentSlug}`)
-    : ensureTrailingSlash(`/${targetLang}/`);
-
-  if (pathname === candidatePath) {
-    return candidatePath;
-  }
-
-  return ensureTrailingSlash(`/${targetLang}/`);
+  return ensureTrailingSlash(
+    normalizedBasePath === '/'
+      ? rawPath
+      : `${basePathPrefix}${rawPath}`,
+  );
 }
 
 const localeOptionKeys = SUPPORTED_LOCALES.map((code) => resolveLocaleDefinition(code));
@@ -236,7 +255,10 @@ const languageOptions = localeOptionKeys.map((definition) => {
     alternateMap.has(langTagLower);
 
   const fallbackHref =
-    code === DEFAULT_LOCALE ? '/' : ensureTrailingSlash(`/${code}/`);
+    code === DEFAULT_LOCALE
+      ? normalizedBasePath
+      : ensureTrailingSlash(`${basePathPrefix}/${code}/`);
+
   const href = isAvailable ? getLocalePath(code) : fallbackHref;
 
   return {
@@ -253,9 +275,10 @@ const htmlLang = getLocaleLangTag(lang);
 const htmlDir = getLocaleDirection(lang);
 
 function isPostListPage(): boolean {
-  const pathname = Astro.url.pathname;
+  const pathnameWithoutBase = stripBasePath(Astro.url.pathname);
   const paginatedHome = new RegExp(`^/(?:${localePathPattern}/)?(\\d+/?)?$`);
-  if (pathname === '/' || paginatedHome.test(pathname)) {
+
+  if (pathnameWithoutBase === '/' || paginatedHome.test(pathnameWithoutBase)) {
     return true;
   }
 
@@ -263,11 +286,12 @@ function isPostListPage(): boolean {
     return false;
   }
 
-  const categoryPattern = categories.map(escapeRegExp).join('|');
+  const categoryPattern = categorySegments.map(escapeRegExp).join('|');
   const categoryRegex = new RegExp(
     `^/(?:${localePathPattern}/)?(${categoryPattern})(/\\d+/?)?$`
   );
-  return categoryRegex.test(pathname);
+
+  return categoryRegex.test(pathnameWithoutBase);
 }
 
 const showSearch = isPostListPage();
@@ -312,7 +336,9 @@ const toAbsolute = (url?: string) =>
 const prevAbsolute = toAbsolute(prevPageUrl);
 const nextAbsolute = toAbsolute(nextPageUrl);
 const fallbackDescription = t('ui.description');
-const homeHref = ensureTrailingSlash(`/${isDefaultLocale(lang) ? '' : lang}`);
+const homeHref = isDefaultLocale(lang)
+  ? normalizedBasePath
+  : ensureTrailingSlash(`${basePathPrefix}/${lang}/`);
 
 type ResolvedNavItem = {
   id: string;

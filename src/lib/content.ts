@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import siteConfig from '@config/site';
 import { DEFAULT_LOCALE } from '@lib/language';
-import { ensureTrailingSlash } from '@utils/url';
+import { ensureTrailingSlash, withBase } from '@utils/url';
 
 export type PostEntry = CollectionEntry<'posts'>;
 export type PageEntry = CollectionEntry<'pages'>;
@@ -186,7 +186,7 @@ export function getPostPermalink(entry: PostEntry) {
   const isDefaultLang = lang === DEFAULT_LOCALE;
   const url = isDefaultLang ? basePath : `/${lang}${basePath}`;
 
-  return ensureTrailingSlash(url);
+  return withBase(url);
 }
 
 export function getPostCategory(entry: PostEntry) {
@@ -225,11 +225,11 @@ export function getPostImage(entry: PostEntry) {
   }
 
   const category = getPostCategory(entry);
-
-  return (
+  const fallbackImage =
     CATEGORY_PLACEHOLDERS[category] ??
-    siteConfig.featuredImageFallback
-  );
+    siteConfig.featuredImageFallback;
+
+  return fallbackImage ? withBase(fallbackImage) : fallbackImage;
 }
 
 export function getPageLanguage(entry: PageEntry) {
@@ -251,9 +251,11 @@ export function getPagePermalink(entry: PageEntry) {
   const lang = getPageLanguage(entry);
   const basePath = slug ? `/${slug}` : '/';
 
-  return lang === DEFAULT_LOCALE
+  const url = lang === DEFAULT_LOCALE
     ? ensureTrailingSlash(basePath)
     : ensureTrailingSlash(`/${lang}${basePath}`);
+
+  return withBase(url);
 }
 
 export async function getPageTranslations(entry: PageEntry) {
@@ -301,14 +303,16 @@ export function getCategoryPathSegment(categoryId: string): string {
 }
 
 export function getCategoryPath(categoryId: string): string {
-  return ensureTrailingSlash(`/${getCategoryPathSegment(categoryId)}`);
+  return withBase(`/${getCategoryPathSegment(categoryId)}`);
 }
 
 export function getCategoryPermalink(categoryId: string, lang: string = DEFAULT_LOCALE): string {
-  const basePath = getCategoryPath(categoryId);
-  return lang === DEFAULT_LOCALE
-    ? basePath
-    : ensureTrailingSlash(`/${lang}${basePath}`);
+  const categorySegment = getCategoryPathSegment(categoryId);
+  const rawPath = lang === DEFAULT_LOCALE
+    ? `/${categorySegment}`
+    : `/${lang}/${categorySegment}`;
+
+  return withBase(rawPath);
 }
 
 export function findCategoryIdByPathSegment(segment: string): string | null {

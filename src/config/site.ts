@@ -123,6 +123,72 @@ const siteConfig: SiteConfig = {
         ko: '보안 이슈 등 보안 관련 내용을 다룹니다.',
       },
     },
+    network: {
+      enabled: true,
+      path: '/BL0G/network',
+      icon: '🌐',
+      label: {
+        ko: 'network',
+      },
+      description: {
+        ko: '네트워크 관련 내용을 다룹니다.',
+      },
+    },
+    digitalforensic: {
+      enabled: true,
+      path: '/BL0G/digitalforensic',
+      icon: '🚨',
+      label: {
+        ko: 'digitalforensic',
+      },
+      description: {
+        ko: '디지털포렌식 관련 내용을 다룹니다.',
+      },
+    },
+    siem: {
+      enabled: true,
+      path: '/BL0G/siem',
+      icon: '🚨',
+      label: {
+        ko: 'siem',
+      },
+      description: {
+        ko: 'siem 관련 내용을 다룹니다.',
+      },
+    },
+    linux: {
+      enabled: true,
+      path: '/BL0G/linux',
+      icon: '🚨',
+      label: {
+        ko: 'linux',
+      },
+      description: {
+        ko: 'linux 관련 내용을 다룹니다.',
+      },
+    },
+    ctf: {
+      enabled: true,
+      path: '/BL0G/ctf',
+      icon: '🚨',
+      label: {
+        ko: 'ctf',
+      },
+      description: {
+        ko: 'ctf 관련 내용을 다룹니다.',
+      },
+    },
+    car: {
+      enabled: true,
+      path: '/BL0G/car',
+      icon: '🚨',
+      label: {
+        ko: 'car',
+      },
+      description: {
+        ko: 'car 관련 내용을 다룹니다.',
+      },
+    },
   },
 
   navigation: [
